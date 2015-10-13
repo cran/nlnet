@@ -1,0 +1,18 @@
+exportPattern("^[[:alpha:]]+")
+importFrom(TSP,TSP)
+importFrom(TSP,solve_TSP)
+importFrom(TSP,concorde_path)
+importFrom(TSP,insert_dummy)
+importFrom(TSP,cut_tour)
+importFrom(fdrtool,fdrtool)
+importFrom(igraph,multilevel.community)
+importFrom(igraph,label.propagation.community)
+importFrom(igraph,leading.eigenvector.community)
+importFrom(igraph,graph.adjacency)
+importFrom(igraph,plot.igraph)
+importFrom(coin,normal_trafo)
+importFrom("graphics", "plot")
+importFrom("methods", "new")
+importFrom("stats", "as.dist", "cor", "dist", "hclust", "pnorm", "pt",
+            "qnorm", "quantile", "rnorm", "runif", "sd")
+
