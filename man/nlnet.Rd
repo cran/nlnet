@@ -60,35 +60,32 @@ plot.method: It provides three kinds of ploting method:
  \item{graph}{An igraph object including edges : Numeric vector defining the edges, the first edge points from the first element to the second, the second edge from the third to the fourth, etc.}
  \item{community}{Numeric vector, one value for each vertex, the membership vector of the community structure.}
 }
+\references{
+	https://www.ncbi.nlm.nih.gov/pubmed/27380516
+}
 \author{
   Haodong Liu <liuhaodong0828@gmail.com>
 }
-
-
 \seealso{
   \code{\link{data.gen}}
 }
 \examples{
  
  ## generating the data matrix & hiden clusters as a sample
- input<-data.gen()
- ##Now input includes data matrix and hiden clusters, so get the matrix as input.
- input<-input$data
- 
- ##change the ploting method
- nlnet(input,plot.method="graph")
- ## see fdrtool image
- nlnet(input,gene.fdr.plot=TRUE)
+  input<-data.gen(n.genes=40, n.grps=4)
+## now input includes data matrix and hiden clusters, so get the matrix as input.
+input<-input$data 
+##change the ploting method
+ result<-nlnet(input,plot.method="graph")
+  ## get the result and see it values
+ graph<-result$graph ##a igraph object.
+ comm<-result$community ##community of the graph
  
  ## use different community detection method
- nlnet(input,gene.community.method="label.propagation")
+ #nlnet(input,gene.community.method="label.propagation")
  
  ## change the fdr pro to control connections of genes
  ## adjust the modularity size
- nlnet(input,conn.proportion=0.005,min.module.size=10)
+ #nlnet(input,conn.proportion=0.005,min.module.size=10)
  
- ## get the result and see it values
- result<-nlnet(input)
- graph<-result$graph ##a igraph object.
- comm<-result$community ##community of the graph
 }

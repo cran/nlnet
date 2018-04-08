@@ -9,8 +9,8 @@
 }
 
 \usage{ 
-data.gen(n.genes=100, n.samples=10, n.grps=10, aver.grp.size=10, 
-n.fun.types=3, epsilon=1, n.depend=0)
+data.gen(n.genes=100, n.samples=100, n.grps=10, aver.grp.size=10, 
+n.fun.types=6, epsilon=0.1, n.depend=0)
 }
 
 \arguments{
@@ -42,12 +42,9 @@ Tianwei Yu<tyu8@emory.edu>
 }
 
 \examples{
-##generating a gene matrix with 100 gene and 100 samples per gene.
-data.gen(100,100)
-##gene matrix with more than 10 hiden clusters.
-data.gen(n.grps=20)
+##generating a gene matrix with 100 genes, some in 5 clusters, and 100 samples per gene.
+output<-data.gen(n.genes=100, n.samples=10, n.grps=5)
 ##get the gene matrix from the source of data.
-output<-data.gen()
 matrix<-output$data
 ##get the hiden clusters from the source of data.
 grps<-output$grp

@@ -1,13 +1,5 @@
-#implementation of K-profiles clustering
-#contact: tianwei.yu@emory.edu
-#parameters:
-#dataset: the data matrix with genes in the row and samples in the column
-#nCluster: the number of clusters K
-#maxIter: the maximum number of iterations
-#p.max: the starting p-value cutoff to exclude noise genes
-#p.min: the final p-value cutoff to exclude noise genes
-
-KPC<-function(dataset, nCluster, maxIter =100, p.max=0.2, p.min=0.05){
+KPC <-
+function(dataset, nCluster, maxIter =100, p.max=0.2, p.min=0.05){
     
     #library(TSP)
     
@@ -100,4 +92,3 @@ KPC<-function(dataset, nCluster, maxIter =100, p.max=0.2, p.min=0.05){
     r$p.list=p.rec
     return (r)
 }
-

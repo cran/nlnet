@@ -1,21 +1,5 @@
-# source this code to conduct the non-linear relations network reconstruction.
-# input: the data matrix with no missing values
-# min.fdr.cutoff: the minimun value of the local false discovery cutoff in establishing links between genes
-# max.fdr.cutoff: the maximun value of the local false discovery cutoff in establishing links between genes
-# conn.proportion: determine how much connections between genes.
-# gene.fdr.plot: whether plot a figure with estimated densities, distribution functions, and (local) false discovery rates
-# min.module.size: the min number of genes together as a module.
-# gene.community.method: it provides three kinds of community detection method:
-# "mutilevel", "label.propagation" and "leading.eigenvector".
-# use.normal.approx: whether to use the normal approximation to for the null hypothesis. If TRUE, normal approximation is used for every feature, AND all covariances are assumed to be zero. If FALSE, generates permutation based null distribution - mean vector and a variance-covariance matrix.
-# normalization: the normalization method for the array. There are three choices - "standardize" means removing the mean of each row and make the standard deviation one; "normal_score" means normal score transformation; "none" means do nothing. In that case we still assume some normalization has been done by the user such that each row has approximately mean 0 and sd 1. 
-# If TRUE, normal approximation is used for every feature, AND all covariances are assumed to be zero. If FALSE, generates permutation based null distribution - mean vector and a variance-covariance matrix.
-# plot.method: it provides three kinds of ploting method:
-# "none" means no graph "communitygraph" means ploting community with graph, "graph" means ploting graph, "membership" means ploting membership of the community
-# return the community and its membership
-################################################################################
-
-nlnet<-function(input, min.fdr.cutoff=0.05,max.fdr.cutoff=0.2,conn.proportion=0.007,gene.fdr.plot=FALSE,min.module.size=0,gene.community.method="multilevel",use.normal.approx=FALSE,normalization="standardize",plot.method="communitygraph")
+nlnet <-
+function(input, min.fdr.cutoff=0.05,max.fdr.cutoff=0.2,conn.proportion=0.007,gene.fdr.plot=FALSE,min.module.size=0,gene.community.method="multilevel",use.normal.approx=FALSE,normalization="standardize",plot.method="communitygraph")
 {
     
     normrow<-function(array)
@@ -138,10 +122,10 @@ nlnet<-function(input, min.fdr.cutoff=0.05,max.fdr.cutoff=0.2,conn.proportion=0.
     gene.rel.mat<-matrix(0,nrow=n,ncol=n)#the matrix store the relationship between two genes, 1 means having relationship while 0 means no relationship
     gene.fdr.mat<-matrix(0,nrow=n,ncol=n)
     for(i in 1:n) {
-      sim.vec<-d.mat[i,]
-      suppressWarnings(t.locfdr<-fdrtool(sim.vec, statistic="normal", plot=gene.fdr.plot,color.figure=TRUE,verbose=FALSE,cutoff.method="pct0",pct0=0.75))
-      t.row.lfdr<-as.vector(t.locfdr$lfdr)
-      gene.fdr.mat[i,]<-t.row.lfdr
+        sim.vec<-d.mat[i,]
+        suppressWarnings(t.locfdr<-fdrtool(sim.vec, statistic="normal", plot=gene.fdr.plot,color.figure=TRUE,verbose=FALSE,cutoff.method="pct0",pct0=0.75))
+        t.row.lfdr<-as.vector(t.locfdr$lfdr)
+        gene.fdr.mat[i,]<-t.row.lfdr
     }
     #now dynamic adjust the fdr cutoff
     last.fdr.cutoff<-quantile(as.vector(gene.fdr.mat),conn.proportion)
@@ -149,19 +133,19 @@ nlnet<-function(input, min.fdr.cutoff=0.05,max.fdr.cutoff=0.2,conn.proportion=0.
     if(last.fdr.cutoff > max.fdr.cutoff){
         gene.fdr.cutoff<- max.fdr.cutoff
     }else{
-     if(last.fdr.cutoff < min.fdr.cutoff){
-        gene.fdr.cutoff<- min.fdr.cutoff
-      }else{
-        gene.fdr.cutoff<-last.fdr.cutoff
-      }
+        if(last.fdr.cutoff < min.fdr.cutoff){
+            gene.fdr.cutoff<- min.fdr.cutoff
+        }else{
+            gene.fdr.cutoff<-last.fdr.cutoff
+        }
     }
     cat('------fdr cutoff real ',gene.fdr.cutoff,'-------\n')
     for(i in 1:n){
-      for(j in 1:n){
-        if(gene.fdr.mat[i,j] < gene.fdr.cutoff){
-          gene.rel.mat[i,j]<-1 
-        } 
-      }
+        for(j in 1:n){
+            if(gene.fdr.mat[i,j] < gene.fdr.cutoff){
+                gene.rel.mat[i,j]<-1
+            }
+        }
     }
     gene.rel.mat<-t(gene.rel.mat)+gene.rel.mat ##symmetric
     
@@ -171,63 +155,63 @@ nlnet<-function(input, min.fdr.cutoff=0.05,max.fdr.cutoff=0.2,conn.proportion=0.
     }else if(gene.community.method=="label.propagation"){
         commu<-label.propagation.community(gene.graph)
     }else if(gene.community.method=="leading.eigenvector"){
-      errormsg = "yes"
-      graph.tmp<-gene.graph
-      commu<-tryCatch({
-        commu<-leading.eigenvector.community(graph.tmp)
-        return(commu)
-      },error = function(e) {
-        cat('---max interations reached, so restrict steps to 100')
-        errormsg2 = tryCatch({
-          commu<-leading.eigenvector.community(graph.tmp,steps=100)
-          return(commu)
-        },error = function(e){
-          cat('---max interations reached, so restrict steps to 10')
-          commu<-leading.eigenvector.community(graph.tmp,steps=10)
-          return(commu)
+        errormsg = "yes"
+        graph.tmp<-gene.graph
+        commu<-tryCatch({
+            commu<-leading.eigenvector.community(graph.tmp)
+            return(commu)
+        },error = function(e) {
+            cat('---max interations reached, so restrict steps to 100')
+            errormsg2 = tryCatch({
+                commu<-leading.eigenvector.community(graph.tmp,steps=100)
+                return(commu)
+            },error = function(e){
+                cat('---max interations reached, so restrict steps to 10')
+                commu<-leading.eigenvector.community(graph.tmp,steps=10)
+                return(commu)
+            })
         })
-      })
     }else{
-      print("can not find the method, use multilevel as the default one")
-      commu<-multilevel.community(gene.graph, weights=NA)
+        print("can not find the method, use multilevel as the default one")
+        commu<-multilevel.community(gene.graph, weights=NA)
     }
     
     mem<-commu$membership
     ta<-table(mem)
     for(i in 1 : length(ta)){
-      if(ta[i] < min.module.size){
-        ##now replace the value in the mem that equals i to zero
-        for(j in 1 : length(mem)){
-          if(mem[j] == i){
-            mem[j]<-0  
-          }
+        if(ta[i] < min.module.size){
+            ##now replace the value in the mem that equals i to zero
+            for(j in 1 : length(mem)){
+                if(mem[j] == i){
+                    mem[j]<-0
+                }
+            }
         }
-      }
     }
     ## then we adjust the index of community after we have set some value into zero
     ta.new<-table(mem)
     data.frame<-as.data.frame(ta.new)$mem
     if(data.frame[1] == 0){
-      for(i in 1 : length(ta.new)){
-        if(i > 1){
-          index.origin <- data.frame[i]
-          index.new <- i-1
-          for(j in 1 : length(mem)){
-            if(mem[j] == index.origin){
-              mem[j]<-index.new
+        for(i in 1 : length(ta.new)){
+            if(i > 1){
+                index.origin <- data.frame[i]
+                index.new <- i-1
+                for(j in 1 : length(mem)){
+                    if(mem[j] == index.origin){
+                        mem[j]<-index.new
+                    }
+                }
             }
-          }
         }
-      }
     }
     if(plot.method=="none"){
         
     }else if(plot.method=="communitygraph"){
-      plot(commu,gene.graph)
+        plot(commu,gene.graph)
     }else if(plot.method=="graph"){
-      plot.igraph(gene.graph)
-    }else if(plot.method=="membership"){ 
-        plot(mem) 
+        plot.igraph(gene.graph)
+    }else if(plot.method=="membership"){
+        plot(mem)
     }
     graph.community<-new("list")
     graph.community$algorithm<-gene.community.method
@@ -235,4 +219,3 @@ nlnet<-function(input, min.fdr.cutoff=0.05,max.fdr.cutoff=0.2,conn.proportion=0.
     graph.community$community<-mem
     return (graph.community)
 }
-
