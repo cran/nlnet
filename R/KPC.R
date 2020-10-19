@@ -32,7 +32,7 @@ function(dataset, nCluster, maxIter =100, p.max=0.2, p.min=0.05){
     }
     
     # initialization randomly
-    indCluster= sample(1:nCluster, ngene, replace=TRUE)
+    indCluster= sample(rep(1:nCluster, ngene)[1:ngene], ngene, replace=FALSE)
     path= list()
     
     for(i in 1:nCluster){
@@ -62,6 +62,7 @@ function(dataset, nCluster, maxIter =100, p.max=0.2, p.min=0.05){
         dist.mat<-matrix(0, nrow=nrow(dataset), ncol=nCluster)
         
         for(i in 1:nCluster){
+            if(length(path[[i]])==1) path[[i]]<-sample(1:ncol(dataset),ncol(dataset),replace=FALSE)
             this.data<-dataset[,path[[i]]]
             this.d<-this.data[,2:ncol(this.data)]-this.data[,1:(ncol(this.data)-1)]
             this.d<-abs(this.d)
